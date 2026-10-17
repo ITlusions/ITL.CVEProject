@@ -7,7 +7,7 @@ import { StatsBar } from "./components/StatsBar";
 import type { CveFilters, CveRecord, ListResponse, StatsResponse } from "./types";
 
 const PAGE_SIZE = 50;
-const EMPTY_FILTERS: CveFilters = { q: "", cve_id: "", state: "", severity: "" };
+const EMPTY_FILTERS: CveFilters = { q: "", cve_id: "", state: "", severity: "", kev: "", epss_min: "" };
 const SEVERITIES = ["CRITICAL", "HIGH", "MEDIUM", "LOW"];
 
 export default function App() {
@@ -88,6 +88,19 @@ export default function App() {
             </option>
           ))}
         </select>
+        <select value={draft.kev} onChange={(e) => setDraft({ ...draft, kev: e.target.value })}>
+          <option value="">Any exploitation status</option>
+          <option value="true">Known exploited (KEV)</option>
+        </select>
+        <input
+          type="number"
+          min="0"
+          max="1"
+          step="0.01"
+          placeholder="Min EPSS (0-1)"
+          value={draft.epss_min}
+          onChange={(e) => setDraft({ ...draft, epss_min: e.target.value })}
+        />
         <button type="submit">Search</button>
         <button type="button" onClick={handleReset}>
           Reset

@@ -5,6 +5,8 @@ export interface CveSummary {
   title: string | null;
   cvss_score: number | null;
   severity: string | null;
+  kev: boolean;
+  epss_score: number | null;
 }
 
 export interface CveRecord {
@@ -15,6 +17,13 @@ export interface CveRecord {
   title: string | null;
   description: string | null;
   raw: unknown;
+  kev: boolean;
+  kev_date_added: string | null;
+  kev_due_date: string | null;
+  kev_ransomware: string | null;
+  epss_score: number | null;
+  epss_percentile: number | null;
+  enriched_at: string | null;
 }
 
 export interface StatsResponse {
@@ -37,4 +46,6 @@ export interface CveFilters {
   cve_id: string;
   state: string;
   severity: string;
+  kev: string;
+  epss_min: string;
 }

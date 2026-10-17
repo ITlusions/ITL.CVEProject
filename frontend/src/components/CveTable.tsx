@@ -1,5 +1,5 @@
 import type { CveSummary } from "../types";
-import { formatDate, severityClass } from "../format";
+import { formatDate, formatEpss, severityClass } from "../format";
 
 interface Props {
   items: CveSummary[];
@@ -19,6 +19,8 @@ export function CveTable({ items, onSelect }: Props) {
           <th>State</th>
           <th>Severity</th>
           <th>CVSS</th>
+          <th>KEV</th>
+          <th>EPSS</th>
           <th>Updated</th>
           <th>Title</th>
         </tr>
@@ -32,6 +34,8 @@ export function CveTable({ items, onSelect }: Props) {
               <span className={severityClass(item.severity)}>{item.severity ?? "-"}</span>
             </td>
             <td>{item.cvss_score ?? "-"}</td>
+            <td>{item.kev ? <span className="sev sev-critical">KEV</span> : "-"}</td>
+            <td>{formatEpss(item.epss_score)}</td>
             <td>{formatDate(item.date_updated)}</td>
             <td>{item.title ?? ""}</td>
           </tr>

@@ -1,5 +1,5 @@
 import type { CveRecord } from "../types";
-import { formatDate } from "../format";
+import { formatDate, formatEpss } from "../format";
 
 interface Props {
   record: CveRecord;
@@ -27,6 +27,22 @@ export function CveDetail({ record, onClose }: Props) {
         <dd>{formatDate(record.date_updated)}</dd>
         <dt>Imported</dt>
         <dd>{formatDate(record.imported_at)}</dd>
+        <dt>Known exploited</dt>
+        <dd>{record.kev ? `Yes, added ${formatDate(record.kev_date_added)}` : "No"}</dd>
+        {record.kev && (
+          <>
+            <dt>KEV due date</dt>
+            <dd>{formatDate(record.kev_due_date)}</dd>
+            <dt>Ransomware use</dt>
+            <dd>{record.kev_ransomware ?? "Unknown"}</dd>
+          </>
+        )}
+        <dt>EPSS score</dt>
+        <dd>{formatEpss(record.epss_score)}</dd>
+        <dt>EPSS percentile</dt>
+        <dd>{formatEpss(record.epss_percentile)}</dd>
+        <dt>Enriched</dt>
+        <dd>{formatDate(record.enriched_at)}</dd>
       </dl>
       {record.title && <h3>{record.title}</h3>}
       <p className="description">{record.description ?? "No description."}</p>

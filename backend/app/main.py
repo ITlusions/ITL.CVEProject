@@ -9,7 +9,11 @@ from psycopg.rows import dict_row
 
 SEVERITY_SQL = "(jsonb_path_query_first(raw, '$.containers.cna.metrics[*].cvssV3_1.baseSeverity') #>> '{}')"
 SCORE_SQL = "(jsonb_path_query_first(raw, '$.containers.cna.metrics[*].cvssV3_1.baseScore') #>> '{}')::float8"
-SUMMARY_COLUMNS = f"cve_id, state, date_updated, title, {SCORE_SQL} AS cvss_score, {SEVERITY_SQL} AS severity"
+SUMMARY_COLUMNS = (
+    f"cve_id, state, date_updated, title, {SCORE_SQL} AS cvss_score, {SEVERITY_SQL} AS severity, "
+    "COALESCE(kev, false) AS kev, epss_score"
+)
+ENRICHED_FROM = "FROM cve_records LEFT JOIN cve_enrichment USING (cve_id)"
 
 app = FastAPI(title="ITL CVE Explorer API", version="1.0.0")
 
@@ -42,7 +46,7 @@ def stats() -> dict[str, Any]:
             "SELECT max(imported_at) AS last_import, max(date_updated) AS latest_update FROM cve_records"
         ).fetchone()
         recent = conn.execute(
-            f"SELECT {SUMMARY_COLUMNS} FROM cve_records ORDER BY date_updated DESC NULLS LAST LIMIT 10"
+            f"SELECT {SUMMARY_COLUMNS} {ENRICHED_FROM} ORDER BY date_updated DESC NULLS LAST LIMIT 10"
         ).fetchall()
     return {
         "by_state": by_state,
@@ -59,6 +63,8 @@ def list_cves(
     cve_id: str | None = Query(None, max_length=40),
     state: str | None = Query(None, max_length=20),
     severity: str | None = Query(None, max_length=20),
+    kev: bool | None = Query(None),
+    epss_min: float | None = Query(None, ge=0, le=1),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
 ) -> dict[str, Any]:
@@ -76,12 +82,17 @@ def list_cves(
     if severity:
         clauses.append(f"{SEVERITY_SQL} = %s")
         params.append(severity.strip().upper())
+    if kev:
+        clauses.append("kev = true")
+    if epss_min is not None:
+        clauses.append("epss_score >= %s")
+        params.append(epss_min)
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
     params.extend([limit, offset])
 
     with connect() as conn:
         rows = conn.execute(
-            f"SELECT {SUMMARY_COLUMNS}, count(*) OVER() AS total FROM cve_records {where} "
+            f"SELECT {SUMMARY_COLUMNS}, count(*) OVER() AS total {ENRICHED_FROM} {where} "
             "ORDER BY date_updated DESC NULLS LAST LIMIT %s OFFSET %s",
             params,
         ).fetchall()
@@ -95,8 +106,10 @@ def list_cves(
 def get_cve(cve_id: str) -> dict[str, Any]:
     with connect() as conn:
         row = conn.execute(
-            "SELECT cve_id, state, date_updated, imported_at, title, description, raw "
-            "FROM cve_records WHERE cve_id = %s",
+            "SELECT cve_id, state, date_updated, imported_at, title, description, raw, "
+            "COALESCE(kev, false) AS kev, kev_date_added, kev_due_date, kev_ransomware, "
+            "epss_score, epss_percentile, enriched_at "
+            f"{ENRICHED_FROM} WHERE cve_id = %s",
             (cve_id.strip().upper(),),
         ).fetchone()
     if row is None:
