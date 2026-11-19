@@ -21,6 +21,7 @@ export function CveTable({ items, onSelect }: Props) {
           <th>CVSS</th>
           <th>KEV</th>
           <th>EPSS</th>
+          <th>CWE</th>
           <th>Updated</th>
           <th>Title</th>
         </tr>
@@ -36,6 +37,15 @@ export function CveTable({ items, onSelect }: Props) {
             <td>{item.cvss_score ?? "-"}</td>
             <td>{item.kev ? <span className="sev sev-critical">KEV</span> : "-"}</td>
             <td>{formatEpss(item.epss_score)}</td>
+            <td>
+              <div className="cwe-inline">
+                {(item.cwe_ids ?? []).slice(0, 2).map((cweId) => (
+                  <span className="cwe-chip" key={cweId}>{cweId}</span>
+                ))}
+                {item.cwe_ids.length > 2 && <span className="cwe-overflow">+{item.cwe_ids.length - 2}</span>}
+                {item.cwe_ids.length === 0 && "-"}
+              </div>
+            </td>
             <td>{formatDate(item.date_updated)}</td>
             <td>{item.title ?? ""}</td>
           </tr>

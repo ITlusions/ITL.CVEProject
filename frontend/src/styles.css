@@ -109,6 +109,41 @@ header h1 {
   flex: 1 1 260px;
 }
 
+.advanced-filters {
+  flex: 1 0 100%;
+  padding-top: 8px;
+  border-top: 1px solid #eaeef2;
+}
+
+.advanced-filters summary {
+  width: fit-content;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.advanced-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.advanced-filter-grid label {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: #656d76;
+  font-size: 0.82rem;
+}
+
+.advanced-filter-grid input,
+.advanced-filter-grid select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 input,
 select,
 button {
@@ -177,6 +212,29 @@ aside > .muted {
   background: #f6f8fa;
 }
 
+.cwe-inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 180px;
+}
+
+.cwe-chip {
+  display: inline-block;
+  padding: 1px 5px;
+  border: 1px solid #b6d4fe;
+  border-radius: 4px;
+  background: #ddf4ff;
+  color: #0550ae;
+  font-size: 0.76rem;
+  white-space: nowrap;
+}
+
+.cwe-overflow {
+  color: #656d76;
+  font-size: 0.78rem;
+}
+
 .sev {
   display: inline-block;
   padding: 1px 8px;
@@ -240,6 +298,144 @@ aside > .muted {
   margin: 0;
 }
 
+.affected-products,
+.weaknesses {
+  margin: 16px 0;
+  padding-top: 12px;
+  border-top: 1px solid #eaeef2;
+}
+
+.affected-products-head,
+.weaknesses-head,
+.weakness-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.affected-products-head h3,
+.weaknesses-head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.affected-product-list,
+.weakness-list,
+.top-cwe-list {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.affected-product,
+.weakness-item {
+  padding: 10px 0;
+  border-bottom: 1px solid #eaeef2;
+}
+
+.affected-product strong {
+  font-size: 0.9rem;
+}
+
+.affected-product p {
+  margin: 5px 0 0;
+  color: #656d76;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.affected-version-list {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding-left: 18px;
+  font-size: 0.82rem;
+}
+
+.affected-version-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  overflow-wrap: anywhere;
+}
+
+.weakness-title strong {
+  flex: 1 1 160px;
+  font-size: 0.9rem;
+}
+
+.cwe-status {
+  color: #656d76;
+  font-size: 0.75rem;
+}
+
+.weakness-description,
+.weakness-source {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+}
+
+.weakness-source {
+  color: #656d76;
+}
+
+.top-cwes {
+  margin-top: 16px;
+}
+
+.top-cwe-list li + li {
+  border-top: 1px solid #eaeef2;
+}
+
+.top-cwe {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) max-content;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  padding: 8px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.top-cwe:hover .top-cwe-id {
+  text-decoration: underline;
+}
+
+.top-cwe-id {
+  color: #0550ae;
+  font-family: ui-monospace, monospace;
+  font-size: 0.82rem;
+}
+
+.top-cwe-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.85rem;
+}
+
+.top-cwe-track {
+  display: block;
+  height: 5px;
+  margin-top: 5px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: #eaeef2;
+}
+
+.top-cwe-track > span {
+  display: block;
+  height: 100%;
+  background: #0969da;
+}
+
+.top-cwe > strong {
+  font-size: 0.82rem;
+}
+
 .description {
   white-space: pre-wrap;
   font-size: 0.9rem;
@@ -263,3 +459,22 @@ aside > .muted {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+@media (max-width: 560px) {
+  .app {
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .top-cwe {
+    grid-template-columns: 72px minmax(0, 1fr) max-content;
+    gap: 6px;
+  }
+}
+
+/* NCSC advisories view */
+.views { margin-left: auto; display: flex; gap: 0.5rem; }
+.views button.active { font-weight: 600; text-decoration: underline; }
+.ncsc-summary { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 0.75rem; }
+.ncsc-detail { margin-top: 1.5rem; }
+.cve-table tr.clickable { cursor: pointer; }

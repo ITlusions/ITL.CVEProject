@@ -1,4 +1,4 @@
-import type { CveFilters, CveRecord, ListResponse, StatsResponse } from "./types";
+import type { CveFilters, CveRecord, ListResponse, NcscAdvisoryDetail, NcscListResponse, StatsResponse } from "./types";
 
 async function getJson<T>(url: string): Promise<T> {
   const res = await fetch(url);
@@ -22,4 +22,17 @@ export function fetchCves(filters: CveFilters, limit: number, offset: number): P
 
 export function fetchCve(cveId: string): Promise<CveRecord> {
   return getJson<CveRecord>(`/api/cves/${encodeURIComponent(cveId)}`);
+}
+
+export function fetchNcscAdvisories(
+  priority: "priority" | "kev" | "all",
+  limit: number,
+  offset: number,
+): Promise<NcscListResponse> {
+  const params = new URLSearchParams({ priority, limit: String(limit), offset: String(offset) });
+  return getJson<NcscListResponse>(`/api/ncsc/advisories?${params.toString()}`);
+}
+
+export function fetchNcscAdvisory(trackingId: string): Promise<NcscAdvisoryDetail> {
+  return getJson<NcscAdvisoryDetail>(`/api/ncsc/advisories/${encodeURIComponent(trackingId)}`);
 }
